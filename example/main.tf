@@ -1,3 +1,19 @@
+terraform {
+  required_providers {
+    helm = {
+      source = "hashicorp/helm"
+      version = "~> 2.0"
+    }
+
+    storj = {
+      source  = "terraform.local/local/storj"
+      version = "1.0.0"
+    }
+  }
+}
+
+provider "storj" {}
+
 variable "root_access_grant" {
   type = string
 }

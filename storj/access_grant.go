@@ -22,7 +22,7 @@ var AccessGrantBucketSchema = map[string]*schema.Schema{
 		Type:        schema.TypeList,
 		Optional:    true,
 		Description: "The name of the bucket to grant access to.",
-		Elem:        &schema.Schema{Elem: schema.TypeString},
+		Elem:        &schema.Schema{Type: schema.TypeString},
 	},
 }
 
@@ -37,31 +37,31 @@ var AccessGrantSchema = map[string]*schema.Schema{
 	},
 	"allow_download": {
 		Type:        schema.TypeBool,
-		Required:    true,
+		Optional:    true,
 		ForceNew:    true,
 		Description: "Allow downloads to occur when using the derived grant.",
 	},
 	"allow_upload": {
 		Type:        schema.TypeBool,
-		Required:    true,
+		Optional:    true,
 		ForceNew:    true,
 		Description: "Allow uploads to occur when using the derived grant.",
 	},
 	"allow_list": {
 		Type:        schema.TypeBool,
-		Required:    true,
+		Optional:    true,
 		ForceNew:    true,
 		Description: "Allow list operations to occur when using the derived grant.",
 	},
 	"allow_delete": {
 		Type:        schema.TypeBool,
-		Required:    true,
+		Optional:    true,
 		ForceNew:    true,
 		Description: "Allow deletes to occur when using the derived grant.",
 	},
 	"bucket": {
 		Type:        schema.TypeList,
-		Required:    true,
+		Optional:    true,
 		ForceNew:    true,
 		Description: "The list of buckets and associated prefixes the derived access grant should allow access to.",
 		Elem:        &schema.Resource{Schema: AccessGrantBucketSchema},
@@ -142,5 +142,13 @@ func createAccessGrant(ctx context.Context, data *schema.ResourceData, c interfa
 	data.SetId(base64.StdEncoding.EncodeToString(hash[:]))
 	data.Set("derived_access_grant", derived)
 
+	return diags
+}
+
+func readAccessGrant(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
+	return diags
+}
+
+func deleteAccessGrant(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
 	return diags
 }

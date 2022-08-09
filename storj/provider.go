@@ -15,7 +15,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The access grant used to authenticate the user with the server.",
-				DefaultFunc: schema.EnvDefaultFunc("STORJ_ACCESS_GRANT", nil),
+				DefaultFunc: schema.EnvDefaultFunc("STORJ_ACCESS_GRANT", ""),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -35,6 +35,8 @@ func Provider() *schema.Provider {
 			"storj_access_grant": {
 				Schema:        AccessGrantSchema,
 				CreateContext: createAccessGrant,
+				ReadContext:   readAccessGrant,
+				DeleteContext: deleteAccessGrant,
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
