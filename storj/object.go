@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"storj.io/uplink"
 )
 
@@ -204,7 +205,12 @@ func updateObject(ctx context.Context, data *schema.ResourceData, c interface{})
 	}
 
 	// optional
-	metadata := data.Get("metadata").(map[string]string)
+	m := data.Get("metadata").(map[string]interface{})
+	metadata := make(map[string]string, len(m))
+
+	for k, v := range m {
+		metadata[k] = v.(string)
+	}
 
 	upload, err := project.UploadObject(ctx, bucket, key, &uplink.UploadOptions{})
 	if err != nil {
@@ -235,6 +241,17 @@ func updateObject(ctx context.Context, data *schema.ResourceData, c interface{})
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Failed to upload object content.",
+			Detail:   err.Error(),
+		})
+
+		return diags
+	}
+
+	err = upload.Commit()
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to commit object upload.",
 			Detail:   err.Error(),
 		})
 

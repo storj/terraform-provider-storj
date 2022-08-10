@@ -29,6 +29,11 @@ resource "storj_access_grant" "app_grant" {
     name = storj_bucket.app_bucket.bucket
     paths = []
   }
+
+  allow_download = true
+  allow_upload = true
+  allow_list = true
+  allow_delete = true
 }
 
 resource "helm_release" "app" {

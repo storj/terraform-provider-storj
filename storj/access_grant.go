@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+
 	"storj.io/uplink"
 )
 
@@ -77,10 +78,11 @@ var AccessGrantSchema = map[string]*schema.Schema{
 func createAccessGrant(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
 	shares := make([]uplink.SharePrefix, 0)
 
-	buckets := data.Get("bucket").([]map[string]interface{})
+	buckets := data.Get("bucket").([]interface{})
 	for _, bucket := range buckets {
-		name := bucket["name"].(string)
-		paths := bucket["paths"].([]string)
+		b := bucket.(map[string]interface{})
+		name := b["name"].(string)
+		paths := b["paths"].([]interface{})
 
 		if len(paths) == 0 {
 			shares = append(shares, uplink.SharePrefix{
@@ -90,7 +92,7 @@ func createAccessGrant(ctx context.Context, data *schema.ResourceData, c interfa
 			for _, path := range paths {
 				shares = append(shares, uplink.SharePrefix{
 					Bucket: name,
-					Prefix: path,
+					Prefix: path.(string),
 				})
 			}
 		}
