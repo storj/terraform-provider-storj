@@ -33,9 +33,9 @@ resource "storj_access_grant" "terraform_grant" {
 
 resource "storj_object" "terraform_state" {
   bucket = storj_bucket.terraform_bucket.bucket
-  key = "terraform.tfstate"
+  key = "main.tf"
 
-  source = "terraform.tfstate"
+  source = "main.tf"
   metadata = {
     "key1" = "value1"
     "key2" = "value2"

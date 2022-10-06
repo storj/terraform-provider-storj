@@ -21,11 +21,22 @@ var BucketSchema = map[string]*schema.Schema{
 }
 
 func createBucket(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Get("bucket").(string)
 
-	_, err := project.CreateBucket(ctx, bucket)
+	_, err = project.CreateBucket(ctx, bucket)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -42,14 +53,25 @@ func createBucket(ctx context.Context, data *schema.ResourceData, c interface{})
 }
 
 func readBucket(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Id()
 	if bucket == "" {
 		bucket = data.Get("bucket").(string) // as data source
 	}
 
-	_, err := project.StatBucket(ctx, bucket)
+	_, err = project.StatBucket(ctx, bucket)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -66,11 +88,22 @@ func readBucket(ctx context.Context, data *schema.ResourceData, c interface{}) (
 }
 
 func deleteBucket(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Id()
 
-	_, err := project.DeleteBucket(ctx, bucket)
+	_, err = project.DeleteBucket(ctx, bucket)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

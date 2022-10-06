@@ -90,7 +90,18 @@ func createObject(ctx context.Context, data *schema.ResourceData, c interface{})
 }
 
 func readObject(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Get("bucket").(string)
 	key := data.Id()
@@ -127,7 +138,18 @@ func readObject(ctx context.Context, data *schema.ResourceData, c interface{}) (
 }
 
 func readObjects(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Get("bucket").(string)
 
@@ -168,7 +190,18 @@ func readObjects(ctx context.Context, data *schema.ResourceData, c interface{}) 
 }
 
 func updateObject(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	// required
 	bucket := data.Get("bucket").(string)
@@ -264,12 +297,23 @@ func updateObject(ctx context.Context, data *schema.ResourceData, c interface{})
 }
 
 func deleteObject(ctx context.Context, data *schema.ResourceData, c interface{}) (diags diag.Diagnostics) {
-	project := c.(*uplink.Project)
+	access := c.(*uplink.Access)
+
+	project, err := uplink.OpenProject(ctx, access)
+	if err != nil {
+		return append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to open project",
+			Detail:   err.Error(),
+		})
+	}
+
+	defer project.Close()
 
 	bucket := data.Get("bucket").(string)
 	key := data.Get("key").(string)
 
-	_, err := project.DeleteObject(ctx, bucket, key)
+	_, err = project.DeleteObject(ctx, bucket, key)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

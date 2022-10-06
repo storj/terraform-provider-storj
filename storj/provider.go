@@ -68,18 +68,7 @@ func Provider() *schema.Provider {
 				return nil, diags
 			}
 
-			project, err := uplink.OpenProject(ctx, access)
-			if err != nil {
-				diags = append(diags, diag.Diagnostic{
-					Severity: diag.Error,
-					Summary:  "Failed to open project",
-					Detail:   err.Error(),
-				})
-
-				return nil, diags
-			}
-
-			return project, diags
+			return access, diags
 		},
 	}
 }
