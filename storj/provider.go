@@ -39,6 +39,12 @@ func Provider() *schema.Provider {
 				ReadContext:   readAccessGrant,
 				DeleteContext: deleteAccessGrant,
 			},
+			"storj_edge_credentials": {
+				Schema:        EdgeCredentialsSchema,
+				CreateContext: createEdgeCredentials,
+				ReadContext:   readEdgeCredentials,
+				DeleteContext: deleteEdgeCredentials,
+			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"storj_bucket": {
